@@ -69,14 +69,12 @@ def Caltime(date1,date2):
     return (date2-date1).days
 
 def Urlqueue(url_number, date):
-
     '''
     找出需要加入队列的url，存入redis，更新gain_time字段
     :param url_number: 表中的url数目
     :param date: 当前日期
     :return:
     '''
-
     #格式化spiderlevel对应天数
     ttime=[0,1,7,30,90,180]
     db = Mysqlconnect(1)
@@ -111,10 +109,8 @@ def Urlqueue(url_number, date):
     print(date[0], status)
 
 if __name__ == '__main__':
+    #获取表中记录数
     url_number = Gettablerows('APTDatabase', 'sitelist')
-    print(url_number)
     # 获取当前date
     date = Getnowdate()
     Urlqueue(url_number, date)
-
-
