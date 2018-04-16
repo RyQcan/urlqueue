@@ -42,6 +42,7 @@ def Gettablerows(database, table):
         results = cur.fetchall()
         for row in results:
             numbers = row[0]
+        print(numbers)
     except Exception as e:
         raise e
     db.close()
@@ -110,7 +111,7 @@ def Urlqueue(url_number, date):
 
 if __name__ == '__main__':
     #获取表中记录数
-    url_number = Gettablerows('APTDatabase', 'sitelist')
+    url_number = Gettablerows('APTDatabase', 'sitelistnew1')
     # 获取当前date
     date = Getnowdate()
     Urlqueue(url_number, date)

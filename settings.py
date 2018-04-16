@@ -1,5 +1,5 @@
 MYSQL_SETTINGS = {
-    "host": '10.245.144.90',
+    "host": '10.245.144.72',
     'user': 'root',
     'passwd': 'root',
     'db': [
