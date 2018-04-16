@@ -29,14 +29,14 @@ def Redisconnect():
         password=REDIS_SETTINGS['password'])
     return r
 
-def Gettablerows(database, table):
+def Gettablerows(database, tablename):
     '''
     计算database数据库中table表的记录数
     :return numbers: (int)表中记录数
     '''
     db = Mysqlconnect(0)
     cur = db.cursor()
-    sql = "SELECT table_rows FROM TABLES WHERE TABLE_SCHEMA ='"+database+"' AND table_name='"+table+"'"
+    sql = "SELECT table_rows FROM TABLES WHERE TABLE_SCHEMA ='"+database+"' AND table_name='"+tablename+"'"
     try:
         cur.execute(sql)
         results = cur.fetchall()
@@ -53,8 +53,8 @@ def Getnowdate():
     获取当前日期
     :return [date_now,date2]: 当前时间的两种格式
     '''
-    date_now = datetime.datetime.now().strftime('%Y-%m-%d')
-    date2 = time.strptime(date_now, "%Y-%m-%d")
+    date_now = datetime.datetime.now().strftime('%Y/%m/%d')
+    date2 = time.strptime(date_now, "%Y/%m/%d")
     return [date_now,date2]
 
 def Caltime(date1,date2):
@@ -64,12 +64,12 @@ def Caltime(date1,date2):
     :param date2: 当前日期
     :return: (int)两个日期相差天数
     '''
-    date1 = time.strptime(date1, "%Y-%m-%d")
+    date1 = time.strptime(date1, "%Y/%m/%d")
     date1 = datetime.datetime(date1[0], date1[1], date1[2])
     date2 = datetime.datetime(date2[0], date2[1], date2[2])
     return (date2-date1).days
 
-def Urlqueue(url_number, date):
+def Urlqueue(url_number, date, tablename):
     '''
     找出需要加入队列的url，存入redis，更新gain_time字段
     :param url_number: 表中的url数目
@@ -82,9 +82,8 @@ def Urlqueue(url_number, date):
     cur = db.cursor()
     r=Redisconnect()
 
-    for id in range(url_number):
-        sql="SELECT real_url, spiderlevel, gain_time FROM sitelist WHERE id="+str(id)
-
+    for id in range(1, url_number):
+        sql="SELECT real_url, spiderlevel, gain_time FROM "+tablename+" WHERE id="+str(id)
         try:
             cur.execute(sql)
             results = cur.fetchall()
@@ -95,9 +94,10 @@ def Urlqueue(url_number, date):
                 datedevi=Caltime(str(gain_time), date[1])
 
                 if (datedevi>ttime[int(spiderlevel)]):
+
                     r.sadd('url_list', real_url)
 
-                    sql="UPDATE sitelist SET gain_time='"+str(date[0])+"' WHERE id="+str(id)
+                    sql="UPDATE "+tablename+" SET gain_time='"+str(date[0])+"' WHERE id="+str(id)
                     cur.execute(sql)
                     db.commit()
 
@@ -110,8 +110,10 @@ def Urlqueue(url_number, date):
     print(date[0], status)
 
 if __name__ == '__main__':
+    tablename = MYSQL_SETTINGS['table']
+    databasename = MYSQL_SETTINGS['db'][1]
     #获取表中记录数
-    url_number = Gettablerows('APTDatabase', 'sitelistnew1')
+    url_number = Gettablerows(databasename, tablename)
     # 获取当前date
     date = Getnowdate()
-    Urlqueue(url_number, date)
+    Urlqueue(url_number, date, tablename)

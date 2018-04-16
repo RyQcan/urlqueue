@@ -6,6 +6,7 @@ MYSQL_SETTINGS = {
         'information_schema',
         'APTDatabase',
     ],
+    'table': 'sitelistnew1',
     'port': 3306
 }
 REDIS_SETTINGS = {
