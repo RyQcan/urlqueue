@@ -4,18 +4,18 @@ import time
 import datetime
 from settings import MYSQL_SETTINGS,REDIS_SETTINGS
 
-def Mysqlconnect(database):
+def Mysqlconnect(mysqlsetting,database_id):
     '''
     连接mysql数据库
     :param database: (int)指定的数据库，在settings.py查看
     :return db: 数据库链接
     '''
     db = pymysql.connect(
-        host=MYSQL_SETTINGS['host'],
-        user=MYSQL_SETTINGS['user'],
-        passwd=MYSQL_SETTINGS['passwd'],
-        db=MYSQL_SETTINGS['db'][database],
-        port=MYSQL_SETTINGS['port'])
+        host=mysqlsetting['host'],
+        user=mysqlsetting['user'],
+        passwd=mysqlsetting['passwd'],
+        db=mysqlsetting['db'][database_id],
+        port=mysqlsetting['port'])
     return db
 
 def Redisconnect():
@@ -29,12 +29,12 @@ def Redisconnect():
         password=REDIS_SETTINGS['password'])
     return r
 
-def Gettablerows(database, tablename):
+def Gettablerows(mysqlsetting, database, tablename):
     '''
     计算database数据库中table表的记录数
     :return numbers: (int)表中记录数
     '''
-    db = Mysqlconnect(0)
+    db = Mysqlconnect(mysqlsetting,0)
     cur = db.cursor()
     sql = "SELECT table_rows FROM TABLES WHERE TABLE_SCHEMA ='"+database+"' AND table_name='"+tablename+"'"
     try:
@@ -78,7 +78,7 @@ def Urlqueue(url_number, date, tablename):
     '''
     #格式化spiderlevel对应天数
     ttime=[0,1,7,30,90,180]
-    db = Mysqlconnect(1)
+    db = Mysqlconnect(MYSQL_SETTINGS,1)
     cur = db.cursor()
     r=Redisconnect()
 
@@ -110,10 +110,13 @@ def Urlqueue(url_number, date, tablename):
     print(date[0], status)
 
 if __name__ == '__main__':
-    tablename = MYSQL_SETTINGS['table']
-    databasename = MYSQL_SETTINGS['db'][1]
+    mysqlsetting=MYSQL_SETTINGS
+
+    databasename = mysqlsetting['db'][1]
+    tablename = mysqlsetting['table'][0]
+
     #获取表中记录数
-    url_number = Gettablerows(databasename, tablename)
+    url_number = Gettablerows(mysqlsetting, databasename, tablename)
     # 获取当前date
     date = Getnowdate()
     Urlqueue(url_number, date, tablename)
