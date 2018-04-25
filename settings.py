@@ -7,6 +7,7 @@ MYSQL_SETTINGS = {
         'APTDatabase',
     ],
     'table': ['sitelistnew1',
+              'sitelist',
               ],
     'port': 3306
 }

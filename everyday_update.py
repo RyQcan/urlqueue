@@ -1,6 +1,3 @@
-import pymysql
-import time
-import datetime
 from settings import MYSQL_MISSION_SETTINGS
 from aptnote import Mysqlconnect,Gettablerows
 
