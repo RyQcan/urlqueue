@@ -3,7 +3,7 @@ import pymysql
 import time
 import datetime
 from settings import MYSQL_SETTINGS,REDIS_SETTINGS
-#/home/zrq/PycharmProjects/aptnote/aptnote.py
+
 def Mysqlconnect(mysqlsetting,database_id):
     '''
     连接mysql数据库
@@ -109,17 +109,17 @@ def Urlqueue(url_number, date, tablename):
     status='OK'
     print(date[0], status)
 
-def add_to_redis():
-    tablename=MYSQL_SETTINGS['table'][1]
-    db = Mysqlconnect(MYSQL_SETTINGS, 1)
-    cur = db.cursor()
-    r = Redisconnect()
-    sql = "SELECT get_url FROM " + tablename
-    cur.execute(sql)
-    results = cur.fetchall()
-    for row in results:
-        real_url = row[0]
-        r.sadd('url_list', real_url)
+# def add_to_redis():
+#     tablename=MYSQL_SETTINGS['table'][1]
+#     db = Mysqlconnect(MYSQL_SETTINGS, 1)
+#     cur = db.cursor()
+#     r = Redisconnect()
+#     sql = "SELECT get_url FROM " + tablename
+#     cur.execute(sql)
+#     results = cur.fetchall()
+#     for row in results:
+#         real_url = row[0]
+#         r.sadd('url_list', real_url)
 
 if __name__ == '__main__':
     mysqlsetting=MYSQL_SETTINGS
